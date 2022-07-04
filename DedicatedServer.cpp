@@ -1,4 +1,4 @@
-/* Copyright (c) 2002-2012 Croteam Ltd. 
+/* Copyright (c) 2002-2012 Croteam Ltd.
 This program is free software; you can redistribute it and/or modify
 it under the terms of version 2 of the GNU General Public License as published by
 the Free Software Foundation
@@ -36,79 +36,82 @@ CTimerValue _tvLastLevelEnd(-1i64);
 void InitializeGame(void)
 {
   try {
-    #ifndef NDEBUG 
-      #define GAMEDLL _fnmApplicationExe.FileDir()+"Game"+_strModExt+"D.dll"
+    #ifndef NDEBUG
+      #define GAMEDLL _fnmApplicationExe.FileDir() + "Game" + _strModExt + "D.dll"
     #else
-      #define GAMEDLL _fnmApplicationExe.FileDir()+"Game"+_strModExt+".dll"
+      #define GAMEDLL _fnmApplicationExe.FileDir() + "Game" + _strModExt + ".dll"
     #endif
+
     CTFileName fnmExpanded;
     ExpandFilePath(EFP_READ, CTString(GAMEDLL), fnmExpanded);
 
     CPrintF(TRANS("Loading game library '%s'...\n"), (const char *)fnmExpanded);
+
     HMODULE hGame = LoadLibraryA(fnmExpanded);
-    if (hGame==NULL) {
+    if (hGame == NULL) {
       ThrowF_t("%s", GetWindowsError(GetLastError()));
     }
-    CGame* (*GAME_Create)(void) = (CGame* (*)(void))GetProcAddress(hGame, "GAME_Create");
-    if (GAME_Create==NULL) {
+
+    CGame *(*GAME_Create)(void) = (CGame * (*)(void)) GetProcAddress(hGame, "GAME_Create");
+    if (GAME_Create == NULL) {
       ThrowF_t("%s", GetWindowsError(GetLastError()));
     }
+
     _pGame = GAME_Create();
 
   } catch (char *strError) {
     FatalError("%s", strError);
   }
+
   // init game - this will load persistent symbols
   _pGame->Initialize(CTString("Data\\DedicatedServer.gms"));
 }
 
-static void QuitGame(void)
-{
+static void QuitGame(void) {
   _bRunning = FALSE;
 }
 
-static void RestartGame(void)
-{
+static void RestartGame(void) {
   _bForceRestart = TRUE;
 }
-static void NextMap(void)
-{
+
+static void NextMap(void) {
   _bForceNextMap = TRUE;
 }
 
-
 void End(void);
 
-// limit current frame rate if neeeded
-
-void LimitFrameRate(void)
-{
+// Limit current frame rate if neeeded
+void LimitFrameRate(void) {
   // measure passed time for each loop
   static CTimerValue tvLast(-1.0f);
-  CTimerValue tvNow   = _pTimer->GetHighPrecisionTimer();
-  TIME tmCurrentDelta = (tvNow-tvLast).GetSeconds();
+
+  CTimerValue tvNow = _pTimer->GetHighPrecisionTimer();
+  TIME tmCurrentDelta = (tvNow - tvLast).GetSeconds();
 
   // limit maximum frame rate
-  ded_iMaxFPS = ClampDn( ded_iMaxFPS,   1L);
-  TIME tmWantedDelta  = 1.0f / ded_iMaxFPS;
-  if( tmCurrentDelta<tmWantedDelta) Sleep( (tmWantedDelta-tmCurrentDelta)*1000.0f);
-  
+  ded_iMaxFPS = ClampDn(ded_iMaxFPS, 1L);
+  TIME tmWantedDelta = 1.0f / ded_iMaxFPS;
+
+  if (tmCurrentDelta < tmWantedDelta) {
+    Sleep((tmWantedDelta - tmCurrentDelta) * 1000.0f);
+  }
+
   // remember new time
   tvLast = _pTimer->GetHighPrecisionTimer();
 }
 
-// break/close handler
-BOOL WINAPI HandlerRoutine(
-  DWORD dwCtrlType   //  control signal type
-)
+// Break/close handler
+BOOL WINAPI HandlerRoutine(DWORD dwCtrlType)
 {
   if (dwCtrlType == CTRL_C_EVENT
-  || dwCtrlType == CTRL_BREAK_EVENT
-  || dwCtrlType == CTRL_CLOSE_EVENT
-  || dwCtrlType == CTRL_LOGOFF_EVENT
-  || dwCtrlType == CTRL_SHUTDOWN_EVENT) {
+   || dwCtrlType == CTRL_BREAK_EVENT
+   || dwCtrlType == CTRL_CLOSE_EVENT
+   || dwCtrlType == CTRL_LOGOFF_EVENT
+   || dwCtrlType == CTRL_SHUTDOWN_EVENT) {
     _bRunning = FALSE;
   }
+
   return TRUE;
 }
 
@@ -123,18 +126,20 @@ static void LoadingHook_t(CProgressHookInfo *pphi)
   if (!_bRunning) {
     ThrowF_t(TRANS("User break!"));
   }
+
   // if not first or final update, and not enough time passed
-  if (pphi->phi_fCompleted!=0 && pphi->phi_fCompleted!=1 &&
-     (tvNow-tvLast).GetSeconds() < REFRESHTIME) {
+  if (pphi->phi_fCompleted != 0 && pphi->phi_fCompleted != 1
+   && (tvNow - tvLast).GetSeconds() < REFRESHTIME) {
     // do nothing
     return;
   }
+
   tvLast = tvNow;
 
   // print status text
   CTString strRes;
   printf("\r                                                                      ");
-  printf("\r%s : %3.0f%%\r", pphi->phi_strDescription, pphi->phi_fCompleted*100);
+  printf("\r%s : %3.0f%%\r", pphi->phi_strDescription, pphi->phi_fCompleted * 100);
 }
 
 // loading hook functions
@@ -160,11 +165,13 @@ BOOL StartGame(CTString &strLevel)
   _pGame->gam_strCustomLevel = strLevel;
 
   _pGame->gm_strNetworkProvider = "TCP/IP Server";
+
   CUniversalSessionProperties sp;
   _pGame->SetMultiPlayerSession(sp);
-  return _pGame->NewGame( _pGame->gam_strSessionName, strLevel, sp);
+
+  return _pGame->NewGame(_pGame->gam_strSessionName, strLevel, sp);
 }
- 
+
 void ExecScript(const CTString &str)
 {
   CPrintF("Executing: '%s'\n", str);
@@ -173,56 +180,61 @@ void ExecScript(const CTString &str)
   _pShell->Execute(strCmd);
 }
 
-BOOL Init(int argc, char* argv[])
+BOOL Init(int argc, char *argv[])
 {
   _bDedicatedServer = TRUE;
 
-  if (argc!=1+1 && argc!=2+1) {
+  if (argc != 1 + 1 && argc != 2 + 1) {
     // NOTE: this cannot be translated - translations are not loaded yet
     printf("Usage: DedicatedServer <configname> [<modname>]\n"
-      "This starts a server reading configs from directory 'Scripts\\Dedicated\\<configname>\\'\n");
+           "This starts a server reading configs from directory 'Scripts\\Dedicated\\<configname>\\'\n");
     getch();
     exit(0);
   }
 
   SetConsoleTitleA(argv[1]);
 
-  ded_strConfig = CTString("Scripts\\Dedicated\\")+argv[1]+"\\";
+  ded_strConfig = CTString("Scripts\\Dedicated\\") + argv[1] + "\\";
 
-  if (argc==2+1) {
-    _fnmMod = CTString("Mods\\")+argv[2]+"\\";
+  if (argc == 2 + 1) {
+    _fnmMod = CTString("Mods\\") + argv[2] + "\\";
   }
 
-
-  _strLogFile = CTString("Dedicated_")+argv[1];
+  _strLogFile = CTString("Dedicated_") + argv[1];
 
   // initialize engine
   SE_InitEngine(sam_strGameName);
 
-//  ParseCommandLine(strCmdLine);
+  //ParseCommandLine(strCmdLine);
 
   // load all translation tables
   InitTranslation();
   CTFileName fnmTransTable;
+
   try {
     fnmTransTable = CTFILENAME("Data\\Translations\\Engine.txt");
     AddTranslationTable_t(fnmTransTable);
+
     fnmTransTable = CTFILENAME("Data\\Translations\\Game.txt");
     AddTranslationTable_t(fnmTransTable);
+
     fnmTransTable = CTFILENAME("Data\\Translations\\Entities.txt");
     AddTranslationTable_t(fnmTransTable);
+
     fnmTransTable = CTFILENAME("Data\\Translations\\SeriousSam.txt");
     AddTranslationTable_t(fnmTransTable);
+
     fnmTransTable = CTFILENAME("Data\\Translations\\Levels.txt");
     AddTranslationTable_t(fnmTransTable);
 
     FinishTranslationTable();
+
   } catch (char *strError) {
     FatalError("%s %s", CTString(fnmTransTable), strError);
   }
 
   // always disable all warnings when in serious sam
-  _pShell->Execute( "con_bNoWarnings=1;");
+  _pShell->Execute("con_bNoWarnings=1;");
 
   // declare shell symbols
   _pShell->DeclareSymbol("persistent user INDEX ded_iMaxFPS;", &ded_iMaxFPS);
@@ -232,8 +244,8 @@ BOOL Init(int argc, char* argv[])
   _pShell->DeclareSymbol("user INDEX ded_bRestartWhenEmpty;", &ded_bRestartWhenEmpty);
   _pShell->DeclareSymbol("user void Restart(void);", &RestartGame);
   _pShell->DeclareSymbol("user void NextMap(void);", &NextMap);
-  _pShell->DeclareSymbol("persistent user CTString sam_strIntroLevel;",      &sam_strIntroLevel);
-  _pShell->DeclareSymbol("persistent user CTString sam_strGameName;",      &sam_strGameName);
+  _pShell->DeclareSymbol("persistent user CTString sam_strIntroLevel;", &sam_strIntroLevel);
+  _pShell->DeclareSymbol("persistent user CTString sam_strGameName;", &sam_strGameName);
   _pShell->DeclareSymbol("user CTString sam_strFirstLevel;", &sam_strFirstLevel);
 
   // init game - this will load persistent symbols
@@ -246,18 +258,18 @@ BOOL Init(int argc, char* argv[])
   SetConsoleCtrlHandler(HandlerRoutine, TRUE);
 
   // if there is a mod
-  if (_fnmMod!="") {
+  if (_fnmMod != "") {
     // execute the mod startup script
     _pShell->Execute(CTString("include \"Scripts\\Mod_startup.ini\";"));
   }
 
   return TRUE;
 }
+
 void End(void)
 {
-
   // cleanup level-info subsystem
-//  ClearDemosList();
+  //ClearDemosList();
 
   // end game
   _pGame->End();
@@ -277,7 +289,8 @@ void RoundBegin(void)
   // repeat generate script names
   FOREVER {
     strBegScript.PrintF("%s%d_begin.ini", ded_strConfig, iRound);
-    strEndScript.PrintF("%s%d_end.ini",   ded_strConfig, iRound);
+    strEndScript.PrintF("%s%d_end.ini", ded_strConfig, iRound);
+
     // if start script exists
     if (FileExists(strBegScript)) {
       // stop searching
@@ -286,31 +299,36 @@ void RoundBegin(void)
     // if start script doesn't exist
     } else {
       // if this is first round
-      if (iRound==1) {
+      if (iRound == 1) {
         // error
         CPrintF(TRANS("No scripts present!\n"));
         _bRunning = FALSE;
         return;
       }
+
       // try again with first round
       iRound = 1;
     }
   }
-  
+
   // run start script
   ExecScript(strBegScript);
 
   // start the level specified there
-  if (ded_strLevel=="") {
+  if (ded_strLevel == "") {
     CPrintF(TRANS("ERROR: No next level specified!\n"));
     _bRunning = FALSE;
+
   } else {
     EnableLoadingHook();
     StartGame(ded_strLevel);
+
     _bHadPlayers = 0;
     _bRestart = 0;
+
     DisableLoadingHook();
     _tvLastLevelEnd = CTimerValue(-1i64);
+
     CPrintF(TRANS("\nALL OK: Dedicated server is now running!\n"));
     CPrintF(TRANS("Use Ctrl+C to shutdown the server.\n"));
     CPrintF(TRANS("DO NOT use the 'Close' button, it might leave the port hanging!\n\n"));
@@ -321,8 +339,10 @@ void ForceNextMap(void)
 {
   EnableLoadingHook();
   StartGame(ded_strLevel);
+
   _bHadPlayers = 0;
   _bRestart = 0;
+
   DisableLoadingHook();
   _tvLastLevelEnd = CTimerValue(-1i64);
 }
@@ -339,7 +359,7 @@ void RoundEnd(void)
 void DoGame(void)
 {
   // do the main game loop
-  if( _pGame->gm_bGameOn) {
+  if (_pGame->gm_bGameOn) {
     _pGame->GameMainLoop();
 
     // if any player is connected
@@ -350,14 +370,17 @@ void DoGame(void)
           _pNetwork->TogglePause();
         }
       }
+
       // remember that
       _bHadPlayers = 1;
-    // if no player is connected, 
+
+    // if no player is connected
     } else {
       // if was before
       if (_bHadPlayers) {
         // make it restart
         _bRestart = TRUE;
+
       // if never had any player yet
       } else {
         // keep the server paused
@@ -377,11 +400,10 @@ void DoGame(void)
   LimitFrameRate();
 }
 
-int SubMain(int argc, char* argv[])
+int SubMain(int argc, char *argv[])
 {
-
   // initialize
-  if( !Init(argc, argv)) {
+  if (!Init(argc, argv)) {
     End();
     return -1;
   }
@@ -391,13 +413,15 @@ int SubMain(int argc, char* argv[])
 
   // execute dedicated server startup script
   ExecScript(CTFILENAME("Scripts\\Dedicated_startup.ini"));
+
   // execute startup script for this config
-  ExecScript(ded_strConfig+"init.ini");
+  ExecScript(ded_strConfig + "init.ini");
+
   // start first round
   RoundBegin();
 
   // while it is still running
-  while( _bRunning)
+  while (_bRunning)
   {
     // do the main game loop
     DoGame();
@@ -405,33 +429,38 @@ int SubMain(int argc, char* argv[])
     // if game is finished
     if (_pNetwork->IsGameFinished()) {
       // if not yet remembered end of level
-      if (_tvLastLevelEnd.tv_llValue<0) {
+      if (_tvLastLevelEnd.tv_llValue < 0) {
         // remember end of level
         _tvLastLevelEnd = _pTimer->GetHighPrecisionTimer();
+
         // finish this round
         RoundEnd();
+
       // if already remembered
       } else {
         // if time is out
-        if ((_pTimer->GetHighPrecisionTimer()-_tvLastLevelEnd).GetSeconds()>ded_tmTimeout) {
+        if ((_pTimer->GetHighPrecisionTimer() - _tvLastLevelEnd).GetSeconds() > ded_tmTimeout) {
           // start next round
           RoundBegin();
         }
       }
     }
 
-    if (_bRestart||_bForceRestart) {
-      if (ded_bRestartWhenEmpty||_bForceRestart) {
+    if (_bRestart || _bForceRestart) {
+      if (ded_bRestartWhenEmpty || _bForceRestart) {
         _bForceRestart = FALSE;
         _bRestart = FALSE;
         RoundEnd();
+
         CPrintF(TRANS("\nNOTE: Restarting server!\n\n"));
         RoundBegin();
+
       } else {
         _bRestart = FALSE;
         _bHadPlayers = FALSE;
       }
     }
+
     if (_bForceNextMap) {
       ForceNextMap();
       _bForceNextMap = FALSE;
@@ -440,14 +469,13 @@ int SubMain(int argc, char* argv[])
   } // end of main application loop
 
   _pGame->StopGame();
-
   End();
 
   return 0;
 }
 
-
-int main(int argc, char* argv[])
+// Entry point
+int main(int argc, char *argv[])
 {
   int iResult;
   CTSTREAM_BEGIN {
@@ -456,4 +484,3 @@ int main(int argc, char* argv[])
 
   return iResult;
 }
-
