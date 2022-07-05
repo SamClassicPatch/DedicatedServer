@@ -26,9 +26,6 @@ extern CTString ded_strConfig = "";
 extern CTString ded_strLevel = "";
 extern INDEX ded_bRestartWhenEmpty = TRUE;
 extern FLOAT ded_tmTimeout = -1;
-extern CTString sam_strFirstLevel = "Levels\\KarnakDemo.wld";
-extern CTString sam_strIntroLevel = "Levels\\Intro.wld";
-extern CTString sam_strGameName = "serioussam";
 
 CTimerValue _tvLastLevelEnd(-1i64);
 
@@ -247,9 +244,6 @@ BOOL Init(int argc, char *argv[])
   _pShell->DeclareSymbol("user INDEX ded_bRestartWhenEmpty;", &ded_bRestartWhenEmpty);
   _pShell->DeclareSymbol("user void Restart(void);", &RestartGame);
   _pShell->DeclareSymbol("user void NextMap(void);", &NextMap);
-  _pShell->DeclareSymbol("persistent user CTString sam_strIntroLevel;", &sam_strIntroLevel);
-  _pShell->DeclareSymbol("persistent user CTString sam_strGameName;", &sam_strGameName);
-  _pShell->DeclareSymbol("user CTString sam_strFirstLevel;", &sam_strFirstLevel);
 
   // init game - this will load persistent symbols
   InitializeGame();
