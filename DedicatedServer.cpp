@@ -26,7 +26,6 @@ extern CTString ded_strConfig = "";
 extern CTString ded_strLevel = "";
 extern INDEX ded_bRestartWhenEmpty = TRUE;
 extern FLOAT ded_tmTimeout = -1;
-extern CGame *_pGame = NULL;
 extern CTString sam_strFirstLevel = "Levels\\KarnakDemo.wld";
 extern CTString sam_strIntroLevel = "Levels\\Intro.wld";
 extern CTString sam_strGameName = "serioussam";
@@ -233,6 +232,9 @@ BOOL Init(int argc, char *argv[])
   } catch (char *strError) {
     FatalError("%s %s", CTString(fnmTransTable), strError);
   }
+
+  // [Cecil] Initialize the core
+  CECIL_InitCore();
 
   // always disable all warnings when in serious sam
   _pShell->Execute("con_bNoWarnings=1;");

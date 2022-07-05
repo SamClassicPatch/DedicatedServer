@@ -15,6 +15,3 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 // [Cecil] Include the core library
 #include <CoreLib/Core.h>
-
-// [Cecil] CSessionProperties byte container (replacement for CUniversalSessionProperties)
-typedef UBYTE CSesPropsContainer[NET_MAXSESSIONPROPERTIES];
