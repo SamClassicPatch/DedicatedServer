@@ -166,10 +166,11 @@ BOOL StartGame(CTString &strLevel)
 
   _pGame->gm_strNetworkProvider = "TCP/IP Server";
 
-  CUniversalSessionProperties sp;
-  _pGame->SetMultiPlayerSession(sp);
+  // [Cecil] Pass byte container
+  CSesPropsContainer sp;
+  _pGame->SetMultiPlayerSession((CSessionProperties &)sp);
 
-  return _pGame->NewGame(_pGame->gam_strSessionName, strLevel, sp);
+  return _pGame->NewGame(_pGame->gam_strSessionName, strLevel, (CSessionProperties &)sp);
 }
 
 void ExecScript(const CTString &str)

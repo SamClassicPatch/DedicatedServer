@@ -15,3 +15,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include <Engine/Engine.h>
 #include <Game/Game.h>
+
+// [Cecil] CSessionProperties byte container (replacement for CUniversalSessionProperties)
+typedef UBYTE CSesPropsContainer[NET_MAXSESSIONPROPERTIES];
