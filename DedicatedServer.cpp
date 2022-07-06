@@ -29,40 +29,6 @@ extern FLOAT ded_tmTimeout = -1;
 
 CTimerValue _tvLastLevelEnd(-1i64);
 
-void InitializeGame(void)
-{
-  try {
-    #ifndef NDEBUG
-      #define GAMEDLL _fnmApplicationExe.FileDir() + "Game" + _strModExt + "D.dll"
-    #else
-      #define GAMEDLL _fnmApplicationExe.FileDir() + "Game" + _strModExt + ".dll"
-    #endif
-
-    CTFileName fnmExpanded;
-    ExpandFilePath(EFP_READ, CTString(GAMEDLL), fnmExpanded);
-
-    CPrintF(TRANS("Loading game library '%s'...\n"), (const char *)fnmExpanded);
-
-    HMODULE hGame = LoadLibraryA(fnmExpanded);
-    if (hGame == NULL) {
-      ThrowF_t("%s", GetWindowsError(GetLastError()));
-    }
-
-    CGame *(*GAME_Create)(void) = (CGame * (*)(void)) GetProcAddress(hGame, "GAME_Create");
-    if (GAME_Create == NULL) {
-      ThrowF_t("%s", GetWindowsError(GetLastError()));
-    }
-
-    _pGame = GAME_Create();
-
-  } catch (char *strError) {
-    FatalError("%s", strError);
-  }
-
-  // init game - this will load persistent symbols
-  _pGame->Initialize(CTString("Data\\DedicatedServer.gms"));
-}
-
 static void QuitGame(void) {
   _bRunning = FALSE;
 }
@@ -245,8 +211,9 @@ BOOL Init(int argc, char *argv[])
   _pShell->DeclareSymbol("user void Restart(void);", &RestartGame);
   _pShell->DeclareSymbol("user void NextMap(void);", &NextMap);
 
-  // init game - this will load persistent symbols
-  InitializeGame();
+  // [Cecil] Load Game library as a module
+  CECIL_LoadGameLib();
+
   _pNetwork->md_strGameID = sam_strGameName;
 
   LoadStringVar(CTString("Data\\Var\\Sam_Version.var"), _strSamVersion);
