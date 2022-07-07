@@ -124,7 +124,7 @@ BOOL StartGame(CTString &strLevel)
     GetGameAPI()->SetStartPlayer(iPlayer, -1);
   }
 
-  GetGameAPI()->GetCustomLevel() = strLevel;
+  GetGameAPI()->SetCustomLevel(strLevel);
   GetGameAPI()->SetNetworkProvider(CGameAPI::NP_SERVER);
 
   // [Cecil] Pass byte container
