@@ -119,20 +119,19 @@ void DisableLoadingHook(void)
 
 BOOL StartGame(CTString &strLevel)
 {
-  _pGame->gm_aiStartLocalPlayers[0] = -1;
-  _pGame->gm_aiStartLocalPlayers[1] = -1;
-  _pGame->gm_aiStartLocalPlayers[2] = -1;
-  _pGame->gm_aiStartLocalPlayers[3] = -1;
+  // [Cecil] Go through available local players
+  for (INDEX iPlayer = 0; iPlayer < GetGameAPI()->GetLocalPlayerCount(); iPlayer++) {
+    GetGameAPI()->SetStartPlayer(iPlayer, -1);
+  }
 
-  _pGame->gam_strCustomLevel = strLevel;
-
-  _pGame->gm_strNetworkProvider = "TCP/IP Server";
+  GetGameAPI()->GetCustomLevel() = strLevel;
+  GetGameAPI()->SetNetworkProvider(CGameAPI::NP_SERVER);
 
   // [Cecil] Pass byte container
   CSesPropsContainer sp;
   _pGame->SetMultiPlayerSession((CSessionProperties &)sp);
 
-  return _pGame->NewGame(_pGame->gam_strSessionName, strLevel, (CSessionProperties &)sp);
+  return _pGame->NewGame(GetGameAPI()->GetSessionName(), strLevel, (CSessionProperties &)sp);
 }
 
 void ExecScript(const CTString &str)
@@ -323,7 +322,7 @@ void RoundEnd(void)
 void DoGame(void)
 {
   // do the main game loop
-  if (_pGame->gm_bGameOn) {
+  if (GetGameAPI()->GetGameState()) {
     _pGame->GameMainLoop();
 
     // if any player is connected
