@@ -226,6 +226,9 @@ BOOL Init(int argc, char *argv[])
     _pShell->Execute(CTString("include \"Scripts\\Mod_startup.ini\";"));
   }
 
+  // [Cecil] Load server plugins
+  _pCoreAPI->LoadPlugins(CPluginAPI::PF_SERVER);
+
   return TRUE;
 }
 
