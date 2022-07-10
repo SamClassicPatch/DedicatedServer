@@ -328,7 +328,7 @@ void RoundEnd(void)
 void DoGame(void)
 {
   // do the main game loop
-  if (GetGameAPI()->GetGameState()) {
+  if (GetGameAPI()->IsGameOn()) {
     _pGame->GameMainLoop();
 
     // if any player is connected
