@@ -237,6 +237,9 @@ void End(void)
   // cleanup level-info subsystem
   //ClearDemosList();
 
+  // [Cecil] Clean up the core
+  CECIL_EndCore();
+
   // end game
   _pGame->End();
 
