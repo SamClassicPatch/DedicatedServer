@@ -211,7 +211,7 @@ BOOL Init(int argc, char *argv[])
   _pShell->DeclareSymbol("user void NextMap(void);", &NextMap);
 
   // [Cecil] Load Game library as a module
-  _pCoreAPI->LoadGameLib();
+  GetAPI()->LoadGameLib();
 
   _pNetwork->md_strGameID = sam_strGameName;
 
@@ -227,7 +227,7 @@ BOOL Init(int argc, char *argv[])
   }
 
   // [Cecil] Load server plugins
-  _pCoreAPI->LoadPlugins(CPluginAPI::PF_SERVER);
+  GetAPI()->LoadPlugins(CPluginAPI::PF_SERVER);
 
   return TRUE;
 }
