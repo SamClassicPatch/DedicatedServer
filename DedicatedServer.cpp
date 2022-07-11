@@ -146,6 +146,9 @@ BOOL Init(int argc, char *argv[])
 {
   _bDedicatedServer = TRUE;
 
+  // [Cecil] Mark as a server application
+  CCoreAPI::SetApplication(CCoreAPI::APP_SERVER);
+
   if (argc != 1 + 1 && argc != 2 + 1) {
     // NOTE: this cannot be translated - translations are not loaded yet
     printf("Usage: DedicatedServer <configname> [<modname>]\n"
