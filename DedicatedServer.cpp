@@ -119,10 +119,8 @@ void DisableLoadingHook(void)
 
 BOOL StartGame(CTString &strLevel)
 {
-  // [Cecil] Go through available local players
-  for (INDEX iPlayer = 0; iPlayer < GetGameAPI()->GetLocalPlayerCount(); iPlayer++) {
-    GetGameAPI()->SetStartPlayer(iPlayer, -1);
-  }
+  // [Cecil] Reset start player indices
+  GetGameAPI()->ResetStartPlayers();
 
   GetGameAPI()->SetCustomLevel(strLevel);
   GetGameAPI()->SetNetworkProvider(CGameAPI::NP_SERVER);
