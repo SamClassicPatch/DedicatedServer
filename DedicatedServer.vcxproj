@@ -161,10 +161,7 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <CustomBuildStep />
-    <PostBuildEvent>
-      <Message>Copying $(TargetName)$(TargetExt) to $(SolutionDir)..\Bin</Message>
-      <Command>copy $(OutDir)$(TargetName)$(TargetExt) $(SolutionDir)..\Bin\Debug\ &gt;nul </Command>
-    </PostBuildEvent>
+    <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE107|Win32'">
     <ClCompile>
@@ -199,10 +196,7 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <CustomBuildStep />
-    <PostBuildEvent>
-      <Message>Copying $(TargetName)$(TargetExt) to $(SolutionDir)..\Bin</Message>
-      <Command>copy $(OutDir)$(TargetName)$(TargetExt) $(SolutionDir)..\Bin\ &gt;nul </Command>
-    </PostBuildEvent>
+    <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_TSE105|Win32'">
     <ClCompile>
@@ -237,10 +231,7 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <CustomBuildStep />
-    <PostBuildEvent>
-      <Message>Copying $(TargetName)$(TargetExt) to $(SolutionDir)..\Bin</Message>
-      <Command>copy $(OutDir)$(TargetName)$(TargetExt) $(SolutionDir)..\Bin\ &gt;nul </Command>
-    </PostBuildEvent>
+    <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_TFE105|Win32'">
     <ClCompile>
@@ -275,10 +266,7 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <CustomBuildStep />
-    <PostBuildEvent>
-      <Message>Copying $(TargetName)$(TargetExt) to $(SolutionDir)..\Bin</Message>
-      <Command>copy $(OutDir)$(TargetName)$(TargetExt) $(SolutionDir)..\Bin\ &gt;nul </Command>
-    </PostBuildEvent>
+    <PostBuildEvent />
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
