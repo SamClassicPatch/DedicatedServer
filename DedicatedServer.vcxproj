@@ -22,7 +22,7 @@
     <ClCompile Include="DedicatedServer.cpp" />
     <ClCompile Include="AppState.cpp" />
     <ClCompile Include="GameHandling.cpp" />
-    <ClCompile Include="StdAfx.cpp">
+    <ClCompile Include="StdH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_TSE107|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_TSE105|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_TSE107|Win32'">Create</PrecompiledHeader>
@@ -36,7 +36,7 @@
     <ClInclude Include="AppState.h" />
     <ClInclude Include="GameHandling.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="StdH.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DedicatedServer.rc" />
@@ -149,6 +149,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <DisableSpecificWarnings>4996;4333</DisableSpecificWarnings>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <PrecompiledHeaderFile>StdH.h</PrecompiledHeaderFile>
     </ClCompile>
     <Midl>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -184,6 +185,7 @@
       <PreprocessorDefinitions>SE1_D3D;SE1_VER=107;WIN32;NDEBUG;_WINDOWS;_WINDLL;_AFXDLL;_USRDLL;DIRECT3D_VERSION=0x0800;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4996;4333</DisableSpecificWarnings>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>StdH.h</PrecompiledHeaderFile>
     </ClCompile>
     <Midl>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -219,6 +221,7 @@
       <PreprocessorDefinitions>SE1_D3D;SE1_VER=105;WIN32;NDEBUG;_WINDOWS;_WINDLL;_AFXDLL;_USRDLL;DIRECT3D_VERSION=0x0800;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <DisableSpecificWarnings>4996;4333</DisableSpecificWarnings>
+      <PrecompiledHeaderFile>StdH.h</PrecompiledHeaderFile>
     </ClCompile>
     <Midl>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -254,6 +257,7 @@
       <PreprocessorDefinitions>SE1_D3D;SE1_TFE;SE1_VER=105;WIN32;NDEBUG;_WINDOWS;_WINDLL;_AFXDLL;_USRDLL;DIRECT3D_VERSION=0x0800;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <DisableSpecificWarnings>4996;4333</DisableSpecificWarnings>
+      <PrecompiledHeaderFile>StdH.h</PrecompiledHeaderFile>
     </ClCompile>
     <Midl>
       <SuppressStartupBanner>true</SuppressStartupBanner>
