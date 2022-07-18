@@ -13,18 +13,16 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
 
-// [Cecil] Include the core library
-#include <CoreLib/Core.h>
+// Application state variables
+extern BOOL _bRunning;
+extern BOOL _bForceRestart;
+extern BOOL _bForceNextMap;
 
-#include "AppState.h"
-#include "GameHandling.h"
+// State updating functions
+void QuitGame(void);
+void RestartGame(void);
+void NextMap(void);
 
-// Dedicated server properties
-extern INDEX ded_iMaxFPS;
-extern CTString ded_strConfig;
-extern CTString ded_strLevel;
-extern INDEX ded_bRestartWhenEmpty;
-extern FLOAT ded_tmTimeout;
-
-// Execute shell script
-void ExecScript(const CTString &str);
+// Loading hook functions
+void EnableLoadingHook(void);
+void DisableLoadingHook(void);

@@ -15,52 +15,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "StdAfx.h"
 
-// application state variables
-extern BOOL _bRunning = TRUE;
-static BOOL _bForceRestart = FALSE;
-static BOOL _bForceNextMap = FALSE;
-
-extern INDEX ded_iMaxFPS = 100;
-extern CTString ded_strConfig = "";
-extern CTString ded_strLevel = "";
-extern INDEX ded_bRestartWhenEmpty = TRUE;
-extern FLOAT ded_tmTimeout = -1;
-
-CTimerValue _tvLastLevelEnd(-1i64);
-
-static void QuitGame(void) {
-  _bRunning = FALSE;
-}
-
-static void RestartGame(void) {
-  _bForceRestart = TRUE;
-}
-
-static void NextMap(void) {
-  _bForceNextMap = TRUE;
-}
-
-void End(void);
-
-// Limit current frame rate if neeeded
-void LimitFrameRate(void) {
-  // measure passed time for each loop
-  static CTimerValue tvLast(-1.0f);
-
-  CTimerValue tvNow = _pTimer->GetHighPrecisionTimer();
-  TIME tmCurrentDelta = (tvNow - tvLast).GetSeconds();
-
-  // limit maximum frame rate
-  ded_iMaxFPS = ClampDn(ded_iMaxFPS, 1L);
-  TIME tmWantedDelta = 1.0f / ded_iMaxFPS;
-
-  if (tmCurrentDelta < tmWantedDelta) {
-    Sleep((tmWantedDelta - tmCurrentDelta) * 1000.0f);
-  }
-
-  // remember new time
-  tvLast = _pTimer->GetHighPrecisionTimer();
-}
+// Dedicated server properties
+INDEX ded_iMaxFPS = 100;
+CTString ded_strConfig = "";
+CTString ded_strLevel = "";
+INDEX ded_bRestartWhenEmpty = TRUE;
+FLOAT ded_tmTimeout = -1;
 
 // Break/close handler
 BOOL WINAPI HandlerRoutine(DWORD dwCtrlType)
@@ -74,70 +34,16 @@ BOOL WINAPI HandlerRoutine(DWORD dwCtrlType)
   }
 
   return TRUE;
-}
+};
 
-#define REFRESHTIME (0.1f)
-
-static void LoadingHook_t(CProgressHookInfo *pphi)
-{
-  // measure time since last call
-  static CTimerValue tvLast(0I64);
-  CTimerValue tvNow = _pTimer->GetHighPrecisionTimer();
-
-  if (!_bRunning) {
-    ThrowF_t(TRANS("User break!"));
-  }
-
-  // if not first or final update, and not enough time passed
-  if (pphi->phi_fCompleted != 0 && pphi->phi_fCompleted != 1
-   && (tvNow - tvLast).GetSeconds() < REFRESHTIME) {
-    // do nothing
-    return;
-  }
-
-  tvLast = tvNow;
-
-  // print status text
-  CTString strRes;
-  printf("\r                                                                      ");
-  printf("\r%s : %3.0f%%\r", pphi->phi_strDescription, pphi->phi_fCompleted * 100);
-}
-
-// loading hook functions
-void EnableLoadingHook(void)
-{
-  printf("\n");
-  SetProgressHook(LoadingHook_t);
-}
-
-void DisableLoadingHook(void)
-{
-  SetProgressHook(NULL);
-  printf("\n");
-}
-
-BOOL StartGame(CTString &strLevel)
-{
-  // [Cecil] Reset start player indices
-  GetGameAPI()->ResetStartPlayers();
-
-  GetGameAPI()->SetCustomLevel(strLevel);
-  GetGameAPI()->SetNetworkProvider(CGameAPI::NP_SERVER);
-
-  // [Cecil] Pass byte container
-  CSesPropsContainer sp;
-  _pGame->SetMultiPlayerSession((CSessionProperties &)sp);
-
-  return _pGame->NewGame(GetGameAPI()->GetSessionName(), strLevel, (CSessionProperties &)sp);
-}
-
+// Execute shell script
 void ExecScript(const CTString &str)
 {
   CPrintF("Executing: '%s'\n", str);
   CTString strCmd;
   strCmd.PrintF("include \"%s\"", str);
   _pShell->Execute(strCmd);
-}
+};
 
 BOOL Init(int argc, char *argv[])
 {
@@ -166,8 +72,6 @@ BOOL Init(int argc, char *argv[])
 
   // initialize engine
   SE_InitEngine(sam_strGameName);
-
-  //ParseCommandLine(strCmdLine);
 
   // load all translation tables
   InitTranslation();
@@ -230,13 +134,10 @@ BOOL Init(int argc, char *argv[])
   GetAPI()->LoadPlugins(CPluginAPI::PF_SERVER);
 
   return TRUE;
-}
+};
 
 void End(void)
 {
-  // cleanup level-info subsystem
-  //ClearDemosList();
-
   // [Cecil] Clean up the core
   CECIL_EndCore();
 
@@ -245,66 +146,10 @@ void End(void)
 
   // end engine
   SE_EndEngine();
-}
+};
 
-static INDEX iRound = 1;
-static BOOL _bHadPlayers = 0;
-static BOOL _bRestart = 0;
-CTString strBegScript;
-CTString strEndScript;
-
-void RoundBegin(void)
-{
-  // repeat generate script names
-  FOREVER {
-    strBegScript.PrintF("%s%d_begin.ini", ded_strConfig, iRound);
-    strEndScript.PrintF("%s%d_end.ini", ded_strConfig, iRound);
-
-    // if start script exists
-    if (FileExists(strBegScript)) {
-      // stop searching
-      break;
-
-    // if start script doesn't exist
-    } else {
-      // if this is first round
-      if (iRound == 1) {
-        // error
-        CPrintF(TRANS("No scripts present!\n"));
-        _bRunning = FALSE;
-        return;
-      }
-
-      // try again with first round
-      iRound = 1;
-    }
-  }
-
-  // run start script
-  ExecScript(strBegScript);
-
-  // start the level specified there
-  if (ded_strLevel == "") {
-    CPrintF(TRANS("ERROR: No next level specified!\n"));
-    _bRunning = FALSE;
-
-  } else {
-    EnableLoadingHook();
-    StartGame(ded_strLevel);
-
-    _bHadPlayers = 0;
-    _bRestart = 0;
-
-    DisableLoadingHook();
-    _tvLastLevelEnd = CTimerValue(-1i64);
-
-    CPrintF(TRANS("\nALL OK: Dedicated server is now running!\n"));
-    CPrintF(TRANS("Use Ctrl+C to shutdown the server.\n"));
-    CPrintF(TRANS("DO NOT use the 'Close' button, it might leave the port hanging!\n\n"));
-  }
-}
-
-void ForceNextMap(void)
+// Force next map loading
+static void ForceNextMap(void)
 {
   EnableLoadingHook();
   StartGame(ded_strLevel);
@@ -314,60 +159,7 @@ void ForceNextMap(void)
 
   DisableLoadingHook();
   _tvLastLevelEnd = CTimerValue(-1i64);
-}
-
-void RoundEnd(void)
-{
-  CPrintF("end of round---------------------------\n");
-
-  ExecScript(strEndScript);
-  iRound++;
-}
-
-// do the main game loop and render screen
-void DoGame(void)
-{
-  // do the main game loop
-  if (GetGameAPI()->IsGameOn()) {
-    _pGame->GameMainLoop();
-
-    // if any player is connected
-    if (_pGame->GetPlayersCount()) {
-      if (!_bHadPlayers) {
-        // unpause server
-        if (_pNetwork->IsPaused()) {
-          _pNetwork->TogglePause();
-        }
-      }
-
-      // remember that
-      _bHadPlayers = 1;
-
-    // if no player is connected
-    } else {
-      // if was before
-      if (_bHadPlayers) {
-        // make it restart
-        _bRestart = TRUE;
-
-      // if never had any player yet
-      } else {
-        // keep the server paused
-        if (!_pNetwork->IsPaused()) {
-          _pNetwork->TogglePause();
-        }
-      }
-    }
-
-  // if game is not started
-  } else {
-    // just handle broadcast messages
-    _pNetwork->GameInactive();
-  }
-
-  // limit current frame rate if needed
-  LimitFrameRate();
-}
+};
 
 int SubMain(int argc, char *argv[])
 {
@@ -441,7 +233,7 @@ int SubMain(int argc, char *argv[])
   End();
 
   return 0;
-}
+};
 
 // Entry point
 int main(int argc, char *argv[])
@@ -452,4 +244,4 @@ int main(int argc, char *argv[])
   } CTSTREAM_END;
 
   return iResult;
-}
+};
