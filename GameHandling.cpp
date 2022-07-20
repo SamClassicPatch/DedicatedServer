@@ -26,7 +26,7 @@ static CTString strBegScript;
 static CTString strEndScript;
 
 // Start new game on a specific level
-BOOL StartGame(const CTString &strLevel)
+static BOOL StartGame(const CTString &strLevel)
 {
   // [Cecil] Reset start player indices
   GetGameAPI()->ResetStartPlayers();
@@ -100,6 +100,19 @@ void RoundEnd(void)
 
   ExecScript(strEndScript);
   _iRound++;
+};
+
+// Force next map loading
+void ForceNextMap(void)
+{
+  EnableLoadingHook();
+  StartGame(ded_strLevel);
+
+  _bHadPlayers = 0;
+  _bRestart = 0;
+
+  DisableLoadingHook();
+  _tvLastLevelEnd = CTimerValue(-1i64);
 };
 
 // Limit current frame rate if neeeded

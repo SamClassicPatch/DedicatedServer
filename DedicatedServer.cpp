@@ -148,19 +148,6 @@ void End(void)
   SE_EndEngine();
 };
 
-// Force next map loading
-static void ForceNextMap(void)
-{
-  EnableLoadingHook();
-  StartGame(ded_strLevel);
-
-  _bHadPlayers = 0;
-  _bRestart = 0;
-
-  DisableLoadingHook();
-  _tvLastLevelEnd = CTimerValue(-1i64);
-};
-
 int SubMain(int argc, char *argv[])
 {
   // initialize

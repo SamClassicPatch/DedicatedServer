@@ -20,14 +20,14 @@ extern BOOL _bRestart;
 
 extern CTimerValue _tvLastLevelEnd;
 
-// Start new game on a specific level
-BOOL StartGame(const CTString &strLevel);
-
 // Begin round on the current map
 void RoundBegin(void);
 
 // End round on the current map
 void RoundEnd(void);
+
+// Force next map loading
+void ForceNextMap(void);
 
 // Main game loop
 void DoGame(void);
