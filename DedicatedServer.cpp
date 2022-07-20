@@ -210,7 +210,7 @@ int SubMain(int argc, char *argv[])
     }
 
     if (_bForceNextMap) {
-      ForceNextMap();
+      StartNewMap();
       _bForceNextMap = FALSE;
     }
 

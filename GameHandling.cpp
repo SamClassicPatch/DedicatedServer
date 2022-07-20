@@ -89,14 +89,7 @@ void RoundBegin(void)
     _bRunning = FALSE;
 
   } else {
-    EnableLoadingHook();
-    StartGame(ded_strLevel);
-
-    _bHadPlayers = 0;
-    _bRestart = 0;
-
-    DisableLoadingHook();
-    _tvLastLevelEnd = CTimerValue(-1i64);
+    StartNewMap();
 
     CPrintF(TRANS("\nALL OK: Dedicated server is now running!\n"));
     CPrintF(TRANS("Use Ctrl+C to shutdown the server.\n"));
@@ -121,8 +114,8 @@ void RoundEnd(BOOL bGameEnd)
   }
 };
 
-// Force next map loading
-void ForceNextMap(void)
+// Start new map loading
+void StartNewMap(void)
 {
   EnableLoadingHook();
   StartGame(ded_strLevel);

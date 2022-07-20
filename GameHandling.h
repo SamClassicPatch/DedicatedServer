@@ -26,8 +26,8 @@ void RoundBegin(void);
 // End round on the current map
 void RoundEnd(BOOL bGameEnd);
 
-// Force next map loading
-void ForceNextMap(void);
+// Start new map loading
+void StartNewMap(void);
 
 // Main game loop
 void DoGame(void);
