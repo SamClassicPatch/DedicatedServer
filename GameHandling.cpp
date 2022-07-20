@@ -43,10 +43,8 @@ static BOOL StartGame(const CTString &strLevel)
   // [Cecil] Custom logic after loading in the world
   if (bGameStarted)
   {
-    // Call game start function for each plugin
-    FOREACHPLUGINHANDLER(GetPluginAPI()->cNetworkEvents, INetworkEvents, pEvents) {
-      pEvents->OnGameStart();
-    }
+    // Start game for Core
+    GetAPI()->OnGameStart();
   }
 
   return bGameStarted;
@@ -100,10 +98,8 @@ void RoundBegin(void)
 // End round on the current map
 void RoundEnd(BOOL bGameEnd)
 {
-  // Call game stop function for each plugin
-  FOREACHPLUGINHANDLER(GetPluginAPI()->cNetworkEvents, INetworkEvents, pEvents) {
-    pEvents->OnGameStop();
-  }
+  // [Cecil] Stop game for Core
+  GetAPI()->OnGameStop();
 
   // [Cecil] Not the end of the game yet
   if (!bGameEnd) {
