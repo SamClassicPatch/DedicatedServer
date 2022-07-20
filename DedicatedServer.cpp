@@ -182,7 +182,7 @@ int SubMain(int argc, char *argv[])
         _tvLastLevelEnd = _pTimer->GetHighPrecisionTimer();
 
         // finish this round
-        RoundEnd();
+        RoundEnd(FALSE);
 
       // if already remembered
       } else {
@@ -198,7 +198,7 @@ int SubMain(int argc, char *argv[])
       if (ded_bRestartWhenEmpty || _bForceRestart) {
         _bForceRestart = FALSE;
         _bRestart = FALSE;
-        RoundEnd();
+        RoundEnd(FALSE);
 
         CPrintF(TRANS("\nNOTE: Restarting server!\n\n"));
         RoundBegin();
@@ -215,6 +215,9 @@ int SubMain(int argc, char *argv[])
     }
 
   } // end of main application loop
+
+  // [Cecil] End of the game
+  RoundEnd(TRUE);
 
   _pGame->StopGame();
   End();

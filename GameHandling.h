@@ -24,7 +24,7 @@ extern CTimerValue _tvLastLevelEnd;
 void RoundBegin(void);
 
 // End round on the current map
-void RoundEnd(void);
+void RoundEnd(BOOL bGameEnd);
 
 // Force next map loading
 void ForceNextMap(void);

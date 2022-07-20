@@ -94,12 +94,15 @@ void RoundBegin(void)
 };
 
 // End round on the current map
-void RoundEnd(void)
+void RoundEnd(BOOL bGameEnd)
 {
-  CPrintF("end of round---------------------------\n");
+  // [Cecil] Not the end of the game yet
+  if (!bGameEnd) {
+    CPrintF("end of round---------------------------\n");
 
-  ExecScript(strEndScript);
-  _iRound++;
+    ExecScript(strEndScript);
+    _iRound++;
+  }
 };
 
 // Force next map loading
