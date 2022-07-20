@@ -38,7 +38,18 @@ static BOOL StartGame(const CTString &strLevel)
   CSesPropsContainer sp;
   _pGame->SetMultiPlayerSession((CSessionProperties &)sp);
 
-  return _pGame->NewGame(GetGameAPI()->GetSessionName(), strLevel, (CSessionProperties &)sp);
+  BOOL bGameStarted = _pGame->NewGame(GetGameAPI()->GetSessionName(), strLevel, (CSessionProperties &)sp);
+
+  // [Cecil] Custom logic after loading in the world
+  if (bGameStarted)
+  {
+    // Call game start function for each plugin
+    FOREACHPLUGINHANDLER(GetPluginAPI()->cNetworkEvents, INetworkEvents, pEvents) {
+      pEvents->OnGameStart();
+    }
+  }
+
+  return bGameStarted;
 };
 
 // Begin round on the current map
@@ -96,6 +107,11 @@ void RoundBegin(void)
 // End round on the current map
 void RoundEnd(BOOL bGameEnd)
 {
+  // Call game stop function for each plugin
+  FOREACHPLUGINHANDLER(GetPluginAPI()->cNetworkEvents, INetworkEvents, pEvents) {
+    pEvents->OnGameStop();
+  }
+
   // [Cecil] Not the end of the game yet
   if (!bGameEnd) {
     CPrintF("end of round---------------------------\n");
