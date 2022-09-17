@@ -68,7 +68,7 @@ void RoundBegin(void)
       // if this is first round
       if (_iRound == 1) {
         // error
-        CPrintF(TRANS("No scripts present!\n"));
+        CPutString(TRANS("No scripts present!\n"));
         _bRunning = FALSE;
         return;
       }
@@ -83,15 +83,15 @@ void RoundBegin(void)
 
   // start the level specified there
   if (ded_strLevel == "") {
-    CPrintF(TRANS("ERROR: No next level specified!\n"));
+    CPutString(TRANS("ERROR: No next level specified!\n"));
     _bRunning = FALSE;
 
   } else {
     StartNewMap();
 
-    CPrintF(TRANS("\nALL OK: Dedicated server is now running!\n"));
-    CPrintF(TRANS("Use Ctrl+C to shutdown the server.\n"));
-    CPrintF(TRANS("DO NOT use the 'Close' button, it might leave the port hanging!\n\n"));
+    CPutString(TRANS("\nALL OK: Dedicated server is now running!\n"));
+    CPutString(TRANS("Use Ctrl+C to shutdown the server.\n"));
+    CPutString(TRANS("DO NOT use the 'Close' button, it might leave the port hanging!\n\n"));
   }
 };
 
@@ -103,7 +103,7 @@ void RoundEnd(BOOL bGameEnd)
 
   // [Cecil] Not the end of the game yet
   if (!bGameEnd) {
-    CPrintF("end of round---------------------------\n");
+    CPutString("end of round---------------------------\n");
 
     ExecScript(strEndScript);
     _iRound++;

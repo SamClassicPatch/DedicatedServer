@@ -200,7 +200,7 @@ int SubMain(int argc, char *argv[])
         _bRestart = FALSE;
         RoundEnd(FALSE);
 
-        CPrintF(TRANS("\nNOTE: Restarting server!\n\n"));
+        CPutString(TRANS("\nNOTE: Restarting server!\n\n"));
         RoundBegin();
 
       } else {
