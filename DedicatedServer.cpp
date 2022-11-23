@@ -102,6 +102,13 @@ BOOL Init(int argc, char *argv[])
   // [Cecil] Initialize the core
   CECIL_InitCore();
 
+  // Function patches
+  CPutString("--- Server: Intercepting Engine functions ---\n");
+  {
+    _EnginePatches.CorePatches();
+  }
+  CPutString("--- Done! ---\n");
+
   // always disable all warnings when in serious sam
   _pShell->Execute("con_bNoWarnings=1;");
 
