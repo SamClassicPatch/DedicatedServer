@@ -127,7 +127,7 @@ BOOL Init(int argc, char *argv[])
   _pNetwork->md_strGameID = sam_strGameName;
 
   LoadStringVar(CTString("Data\\Var\\Sam_Version.var"), sam_strVersion);
-  CPrintF(TRANS("Serious Sam version: %s\n"), sam_strVersion);
+  CPrintF(LOCALIZE("Serious Sam version: %s\n"), sam_strVersion);
 
   SetConsoleCtrlHandler(HandlerRoutine, TRUE);
 
@@ -207,7 +207,7 @@ int SubMain(int argc, char *argv[])
         _bRestart = FALSE;
         RoundEnd(FALSE);
 
-        CPutString(TRANS("\nNOTE: Restarting server!\n\n"));
+        CPutString(LOCALIZE("\nNOTE: Restarting server!\n\n"));
         RoundBegin();
 
       } else {

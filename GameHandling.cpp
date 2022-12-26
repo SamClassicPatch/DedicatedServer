@@ -68,7 +68,7 @@ void RoundBegin(void)
       // if this is first round
       if (_iRound == 1) {
         // error
-        CPutString(TRANS("No scripts present!\n"));
+        CPutString(LOCALIZE("No scripts present!\n"));
         _bRunning = FALSE;
         return;
       }
@@ -83,15 +83,15 @@ void RoundBegin(void)
 
   // start the level specified there
   if (ded_strLevel == "") {
-    CPutString(TRANS("ERROR: No next level specified!\n"));
+    CPutString(LOCALIZE("ERROR: No next level specified!\n"));
     _bRunning = FALSE;
 
   } else {
     StartNewMap();
 
-    CPutString(TRANS("\nALL OK: Dedicated server is now running!\n"));
-    CPutString(TRANS("Use Ctrl+C to shutdown the server.\n"));
-    CPutString(TRANS("DO NOT use the 'Close' button, it might leave the port hanging!\n\n"));
+    CPutString(LOCALIZE("\nALL OK: Dedicated server is now running!\n"));
+    CPutString(LOCALIZE("Use Ctrl+C to shutdown the server.\n"));
+    CPutString(LOCALIZE("DO NOT use the 'Close' button, it might leave the port hanging!\n\n"));
   }
 };
 

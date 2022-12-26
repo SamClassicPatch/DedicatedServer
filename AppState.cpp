@@ -45,7 +45,7 @@ static void LoadingHook_t(CProgressHookInfo *pphi)
   CTimerValue tvNow = _pTimer->GetHighPrecisionTimer();
 
   if (!_bRunning) {
-    ThrowF_t(TRANS("User break!"));
+    ThrowF_t(LOCALIZE("User break!"));
   }
 
   // if not first or final update, and not enough time passed
