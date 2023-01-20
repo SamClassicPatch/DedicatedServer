@@ -26,25 +26,35 @@ static CTString strBegScript;
 static CTString strEndScript;
 
 // Start new game on a specific level
-static BOOL StartGame(const CTString &strLevel)
+static BOOL StartGame(const CTFileName &fnmLevel)
 {
   // [Cecil] Reset start player indices
   GetGameAPI()->ResetStartPlayers();
 
-  GetGameAPI()->SetCustomLevel(strLevel);
   GetGameAPI()->SetNetworkProvider(CGameAPI::NP_SERVER);
 
-  // [Cecil] Pass byte container
-  CSesPropsContainer sp;
-  _pGame->SetMultiPlayerSession((CSessionProperties &)sp);
+  BOOL bGameStarted;
 
-  BOOL bGameStarted = _pGame->NewGame(GetGameAPI()->GetSessionName(), strLevel, (CSessionProperties &)sp);
+  // [Cecil] Load a saved game
+  if (fnmLevel.FileExt() == ".sav") {
+    bGameStarted = _pGame->LoadGame(fnmLevel);
 
-  // [Cecil] Custom logic after loading in the world
-  if (bGameStarted)
-  {
-    // Start game for Core
-    GetAPI()->OnGameStart();
+  // Start new game
+  } else {
+    GetGameAPI()->SetCustomLevel(fnmLevel);
+
+    // [Cecil] Pass byte container
+    CSesPropsContainer sp;
+    _pGame->SetMultiPlayerSession((CSessionProperties &)sp);
+
+    bGameStarted = _pGame->NewGame(GetGameAPI()->GetSessionName(), fnmLevel, (CSessionProperties &)sp);
+
+    // [Cecil] Custom logic after loading in the world
+    if (bGameStarted)
+    {
+      // Start game for Core
+      GetAPI()->OnGameStart();
+    }
   }
 
   return bGameStarted;
@@ -86,9 +96,7 @@ void RoundBegin(void)
     CPutString(LOCALIZE("ERROR: No next level specified!\n"));
     _bRunning = FALSE;
 
-  } else {
-    StartNewMap();
-
+  } else if (StartNewMap()) {
     CPutString(LOCALIZE("\nALL OK: Dedicated server is now running!\n"));
     CPutString(LOCALIZE("Use Ctrl+C to shutdown the server.\n"));
     CPutString(LOCALIZE("DO NOT use the 'Close' button, it might leave the port hanging!\n\n"));
@@ -111,16 +119,22 @@ void RoundEnd(BOOL bGameEnd)
 };
 
 // Start new map loading
-void StartNewMap(void)
-{
+BOOL StartNewMap(void) {
   EnableLoadingHook();
-  StartGame(ded_strLevel);
+
+  // [Cecil] Couldn't start the game
+  if (!StartGame(ded_strLevel)) {
+    CPutString(TRANS("ERROR: Couldn't start a new game!\n"));
+    return FALSE;
+  }
 
   _bHadPlayers = 0;
   _bRestart = 0;
 
   DisableLoadingHook();
   _tvLastLevelEnd = CTimerValue(-1i64);
+
+  return TRUE;
 };
 
 // Limit current frame rate if neeeded

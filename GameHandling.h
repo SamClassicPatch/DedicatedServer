@@ -27,7 +27,7 @@ void RoundBegin(void);
 void RoundEnd(BOOL bGameEnd);
 
 // Start new map loading
-void StartNewMap(void);
+BOOL StartNewMap(void);
 
 // Main game loop
 void DoGame(void);
