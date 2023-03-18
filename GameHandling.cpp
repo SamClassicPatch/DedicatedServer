@@ -39,6 +39,12 @@ static BOOL StartGame(const CTFileName &fnmLevel)
   if (fnmLevel.FileExt() == ".sav") {
     bGameStarted = _pGame->LoadGame(fnmLevel);
 
+    if (bGameStarted)
+    {
+      // Load game for Core
+      GetAPI()->OnGameLoad(fnmLevel);
+    }
+
   // Start new game
   } else {
     GetGameAPI()->SetCustomLevel(fnmLevel);
