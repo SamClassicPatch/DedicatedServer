@@ -70,8 +70,10 @@ BOOL Init(int argc, char *argv[])
   // [Cecil] Mark as a server application
   CCoreAPI::SetApplication(CCoreAPI::APP_SERVER);
 
+#if CLASSICSPATCH_ENGINEPATCHES
   // [Cecil] Function patches
   _EnginePatches.FileSystem();
+#endif
 
   // initialize engine
   SE_InitEngine(sam_strGameName);
@@ -105,12 +107,14 @@ BOOL Init(int argc, char *argv[])
   // [Cecil] Initialize the core
   CECIL_InitCore();
 
+#if CLASSICSPATCH_ENGINEPATCHES
+
   // Function patches
   CPutString("--- Server: Intercepting Engine functions ---\n");
-  {
-    _EnginePatches.CorePatches();
-  }
+  _EnginePatches.CorePatches();
   CPutString("--- Done! ---\n");
+
+#endif // CLASSICSPATCH_ENGINEPATCHES
 
   // always disable all warnings when in serious sam
   _pShell->Execute("con_bNoWarnings=1;");
