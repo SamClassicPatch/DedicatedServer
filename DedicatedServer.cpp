@@ -232,8 +232,6 @@ int SubMain(int argc, char *argv[])
 
   // [Cecil] End of the game
   RoundEnd(TRUE);
-
-  _pGame->StopGame();
   End();
 
   return 0;

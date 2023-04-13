@@ -53,14 +53,8 @@ static BOOL StartGame(const CTFileName &fnmLevel)
     CSesPropsContainer sp;
     _pGame->SetMultiPlayerSession((CSessionProperties &)sp);
 
-    bGameStarted = _pGame->NewGame(GetGameAPI()->GetSessionName(), fnmLevel, (CSessionProperties &)sp);
-
-    // [Cecil] Custom logic after loading in the world
-    if (bGameStarted)
-    {
-      // Start game for Core
-      GetAPI()->OnGameStart();
-    }
+    // [Cecil] Start game through the API
+    bGameStarted = GetGameAPI()->NewGame(GetGameAPI()->GetSessionName(), fnmLevel, (CSessionProperties &)sp);
   }
 
   return bGameStarted;
@@ -112,11 +106,12 @@ void RoundBegin(void)
 // End round on the current map
 void RoundEnd(BOOL bGameEnd)
 {
-  // [Cecil] Stop game for Core
-  GetAPI()->OnGameStop();
+  // [Cecil] Stop game through the API
+  if (bGameEnd) {
+    GetGameAPI()->StopGame();
 
-  // [Cecil] Not the end of the game yet
-  if (!bGameEnd) {
+  // End current round
+  } else {
     CPutString("end of round---------------------------\n");
 
     ExecScript(strEndScript);
