@@ -68,7 +68,7 @@ BOOL Init(int argc, char *argv[])
   _strLogFile = CTString("Dedicated_") + argv[1];
 
   // [Cecil] Mark as a server application
-  CCoreAPI::SetApplication(CCoreAPI::APP_SERVER);
+  CCoreAPI::Setup(CCoreAPI::APP_SERVER);
 
 #if CLASSICSPATCH_ENGINEPATCHES
   // [Cecil] Function patches
