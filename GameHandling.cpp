@@ -100,9 +100,9 @@ void RoundBegin(void)
 // End round on the current map
 void RoundEnd(BOOL bGameEnd)
 {
-  // [Cecil] Stop game through the API
+  // Stop game
   if (bGameEnd) {
-    GetGameAPI()->StopGame();
+    _pGame->StopGame();
 
   // End current round
   } else {
