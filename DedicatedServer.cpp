@@ -145,7 +145,7 @@ BOOL Init(int argc, char *argv[])
   }
 
   // [Cecil] Load server plugins
-  GetAPI()->LoadPlugins(CPluginAPI::PF_SERVER);
+  GetAPI()->LoadPlugins(PLF_SERVER);
 
   return TRUE;
 };
