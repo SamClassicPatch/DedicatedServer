@@ -105,7 +105,7 @@ BOOL Init(int argc, char *argv[])
   }
 
   // [Cecil] Initialize the core
-  CECIL_InitCore();
+  ClassicsPatch_InitCore();
 
 #if CLASSICSPATCH_ENGINEPATCHES
 
@@ -153,7 +153,7 @@ BOOL Init(int argc, char *argv[])
 void End(void)
 {
   // [Cecil] Clean up the core
-  CECIL_EndCore();
+  ClassicsPatch_EndCore();
 
   // end game
   _pGame->End();
