@@ -179,6 +179,11 @@ int SubMain(int argc, char *argv[])
   // execute startup script for this config
   ExecScript(ded_strConfig + "init.ini");
 
+#if CLASSICSPATCH_NEW_QUERY
+  // [Cecil] Update internal master server just in case
+  _pShell->Execute("UpdateInternalGameSpyMS(0);");
+#endif
+
   // start first round
   RoundBegin();
 
