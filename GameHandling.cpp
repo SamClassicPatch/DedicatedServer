@@ -57,33 +57,43 @@ static BOOL StartGame(const CTFileName &fnmLevel)
 // Begin round on the current map
 void RoundBegin(void)
 {
-  // repeat generate script names
-  FOREVER {
-    strBegScript.PrintF("%s%d_begin.ini", ded_strConfig, _iRound);
-    strEndScript.PrintF("%s%d_end.ini", ded_strConfig, _iRound);
+  // [Cecil] Select new scripts only if not changing levels mid-game
+  const BOOL bLevelChange = (ded_strForceLevelChange != "");
 
-    // if start script exists
-    if (FileExists(strBegScript)) {
-      // stop searching
-      break;
+  if (!bLevelChange) {
+    // repeat generate script names
+    FOREVER {
+      strBegScript.PrintF("%s%d_begin.ini", ded_strConfig, _iRound);
+      strEndScript.PrintF("%s%d_end.ini", ded_strConfig, _iRound);
 
-    // if start script doesn't exist
-    } else {
-      // if this is first round
-      if (_iRound == 1) {
-        // error
-        CPutString(LOCALIZE("No scripts present!\n"));
-        _bRunning = FALSE;
-        return;
+      // if start script exists
+      if (FileExists(strBegScript)) {
+        // stop searching
+        break;
+
+      // if start script doesn't exist
+      } else {
+        // if this is first round
+        if (_iRound == 1) {
+          // error
+          CPutString(LOCALIZE("No scripts present!\n"));
+          _bRunning = FALSE;
+          return;
+        }
+
+        // try again with first round
+        _iRound = 1;
       }
-
-      // try again with first round
-      _iRound = 1;
     }
   }
 
   // run start script
   ExecScript(strBegScript);
+
+  // [Cecil] Force new level
+  if (bLevelChange) {
+    ded_strLevel = ded_strForceLevelChange;
+  }
 
   // start the level specified there
   if (ded_strLevel == "") {

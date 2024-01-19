@@ -22,6 +22,9 @@ CTString ded_strLevel = "";
 INDEX ded_bRestartWhenEmpty = TRUE;
 FLOAT ded_tmTimeout = -1;
 
+// [Cecil] Change level of the current round mid-game
+CTString ded_strForceLevelChange = "";
+
 // Break/close handler
 BOOL WINAPI HandlerRoutine(DWORD dwCtrlType)
 {
@@ -128,6 +131,9 @@ BOOL Init(int argc, char *argv[])
   _pShell->DeclareSymbol("user void Restart(void);", &RestartGame);
   _pShell->DeclareSymbol("user void NextMap(void);", &NextMap);
 
+  // [Cecil] Custom symbols
+  _pShell->DeclareSymbol("user CTString ded_strForceLevelChange;", &ded_strForceLevelChange);
+
   // [Cecil] Load Game library as a module
   GetAPI()->LoadGameLib("Data\\DedicatedServer.gms");
 
@@ -213,14 +219,28 @@ int SubMain(int argc, char *argv[])
       }
     }
 
-    if (_bRestart || _bForceRestart) {
-      if (ded_bRestartWhenEmpty || _bForceRestart) {
+    // [Cecil] Force restart if needs a level change
+    const BOOL bMidGameRestart = (_bForceRestart || ded_strForceLevelChange != "");
+
+    if (_bRestart || bMidGameRestart) {
+      if (ded_bRestartWhenEmpty || bMidGameRestart) {
         _bForceRestart = FALSE;
         _bRestart = FALSE;
+
+        // [Cecil] Remember current round
+        INDEX iLastRound = _iRound;
+
         RoundEnd(FALSE);
 
         CPutString(LOCALIZE("\nNOTE: Restarting server!\n\n"));
         RoundBegin();
+
+        // [Cecil] Restore current round after changing levels
+        if (ded_strForceLevelChange != "") {
+          _iRound = iLastRound;
+        }
+
+        ded_strForceLevelChange = "";
 
       } else {
         _bRestart = FALSE;

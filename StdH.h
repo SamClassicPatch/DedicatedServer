@@ -26,6 +26,7 @@ extern CTString ded_strConfig;
 extern CTString ded_strLevel;
 extern INDEX ded_bRestartWhenEmpty;
 extern FLOAT ded_tmTimeout;
+extern CTString ded_strForceLevelChange; // [Cecil]
 
 // Execute shell script
 void ExecScript(const CTString &str);
