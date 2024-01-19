@@ -17,8 +17,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 // Game state properties
 INDEX _iRound = 1;
-BOOL _bHadPlayers = 0;
-BOOL _bRestart = 0;
+BOOL _bHadPlayers = FALSE;
+BOOL _bRestart = FALSE;
 
 CTimerValue _tvLastLevelEnd(-1i64);
 
@@ -123,8 +123,8 @@ BOOL StartNewMap(void) {
     return FALSE;
   }
 
-  _bHadPlayers = 0;
-  _bRestart = 0;
+  _bHadPlayers = FALSE;
+  _bRestart = FALSE;
 
   DisableLoadingHook();
   _tvLastLevelEnd = CTimerValue(-1i64);
@@ -169,7 +169,7 @@ void DoGame(void)
       }
 
       // remember that
-      _bHadPlayers = 1;
+      _bHadPlayers = TRUE;
 
     // if no player is connected
     } else {
