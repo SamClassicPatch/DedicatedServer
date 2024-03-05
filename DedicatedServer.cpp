@@ -81,6 +81,9 @@ BOOL Init(int argc, char *argv[])
   // initialize engine
   SE_InitEngine(sam_strGameName);
 
+  // [Cecil] Initialize the core
+  ClassicsPatch_InitCore();
+
   // load all translation tables
   InitTranslation();
   CTFileName fnmTransTable;
@@ -106,9 +109,6 @@ BOOL Init(int argc, char *argv[])
   } catch (char *strError) {
     FatalError("%s %s", CTString(fnmTransTable), strError);
   }
-
-  // [Cecil] Initialize the core
-  ClassicsPatch_InitCore();
 
 #if CLASSICSPATCH_ENGINEPATCHES
 
