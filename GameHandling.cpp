@@ -51,7 +51,7 @@ static BOOL StartGame(const CTFileName &fnmLevel)
     _pGame->SetMultiPlayerSession((CSessionProperties &)sp);
 
     // [Cecil] Start game through the API
-    bGameStarted = GetGameAPI()->NewGame(GetGameAPI()->GetSessionName(), fnmLevel, (CSessionProperties &)sp);
+    bGameStarted = GetGameAPI()->NewGame(GetGameAPI()->SessionName(), fnmLevel, (CSessionProperties &)sp);
   }
 
   return bGameStarted;

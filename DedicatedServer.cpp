@@ -71,9 +71,9 @@ BOOL Init(int argc, char *argv[])
   _strLogFile = CTString("Dedicated_") + argv[1];
 
   // [Cecil] Mark as a server application
-  CCoreAPI::Setup(CCoreAPI::APP_SERVER);
+  ClassicsPatch_Setup(k_EClassicsPatchAppType_Server);
 
-#if CLASSICSPATCH_ENGINEPATCHES
+#if _PATCHCONFIG_ENGINEPATCHES
   // [Cecil] Function patches
   _EnginePatches.FileSystem();
 #endif
@@ -82,7 +82,7 @@ BOOL Init(int argc, char *argv[])
   SE_InitEngine(sam_strGameName);
 
   // [Cecil] Initialize the core
-  ClassicsPatch_InitCore();
+  ClassicsPatch_Init();
 
   // load all translation tables
   InitTranslation();
@@ -110,14 +110,14 @@ BOOL Init(int argc, char *argv[])
     FatalError("%s %s", CTString(fnmTransTable), strError);
   }
 
-#if CLASSICSPATCH_ENGINEPATCHES
+#if _PATCHCONFIG_ENGINEPATCHES
 
   // Function patches
   CPutString("--- Server: Intercepting Engine functions ---\n");
   _EnginePatches.CorePatches();
   CPutString("--- Done! ---\n");
 
-#endif // CLASSICSPATCH_ENGINEPATCHES
+#endif // _PATCHCONFIG_ENGINEPATCHES
 
   // always disable all warnings when in serious sam
   _pShell->Execute("con_bNoWarnings=1;");
@@ -135,7 +135,7 @@ BOOL Init(int argc, char *argv[])
   _pShell->DeclareSymbol("user CTString ded_strForceLevelChange;", &ded_strForceLevelChange);
 
   // [Cecil] Load Game library as a module
-  GetAPI()->LoadGameLib("Data\\DedicatedServer.gms");
+  GetPluginAPI()->LoadGameLib("Data\\DedicatedServer.gms");
 
   _pNetwork->md_strGameID = sam_strGameName;
 
@@ -151,7 +151,7 @@ BOOL Init(int argc, char *argv[])
   }
 
   // [Cecil] Load server plugins
-  GetAPI()->LoadPlugins(PLF_SERVER);
+  GetPluginAPI()->LoadPlugins(k_EPluginFlagServer);
 
   return TRUE;
 };
@@ -159,7 +159,7 @@ BOOL Init(int argc, char *argv[])
 void End(void)
 {
   // [Cecil] Clean up the core
-  ClassicsPatch_EndCore();
+  ClassicsPatch_Shutdown();
 
   // end game
   _pGame->End();
@@ -185,7 +185,7 @@ int SubMain(int argc, char *argv[])
   // execute startup script for this config
   ExecScript(ded_strConfig + "init.ini");
 
-#if CLASSICSPATCH_NEW_QUERY
+#if _PATCHCONFIG_NEW_QUERY
   // [Cecil] Update internal master server just in case
   _pShell->Execute("UpdateInternalGameSpyMS(0);");
 #endif
