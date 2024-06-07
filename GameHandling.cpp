@@ -32,7 +32,7 @@ static CTString strEndScript;
 static BOOL StartGame(const CTFileName &fnmLevel)
 {
   // [Cecil] Reset start player indices
-  GetGameAPI()->ResetStartPlayers();
+  GetGameAPI()->ResetStartProfiles();
 
   GetGameAPI()->SetNetworkProvider(CGameAPI::NP_SERVER);
 
