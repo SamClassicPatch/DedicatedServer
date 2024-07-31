@@ -158,11 +158,11 @@ BOOL Init(int argc, char *argv[])
 
 void End(void)
 {
-  // [Cecil] Clean up the core
-  ClassicsPatch_Shutdown();
-
   // end game
   _pGame->End();
+
+  // [Cecil] Clean up the core
+  ClassicsPatch_Shutdown();
 
   // end engine
   SE_EndEngine();
