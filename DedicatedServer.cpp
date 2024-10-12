@@ -107,7 +107,7 @@ BOOL Init(int argc, char *argv[])
     FinishTranslationTable();
 
   } catch (char *strError) {
-    FatalError("%s %s", CTString(fnmTransTable), strError);
+    FatalError("Cannot load translation table '%s':\n%s", fnmTransTable.str_String, strError);
   }
 
 #if _PATCHCONFIG_ENGINEPATCHES
